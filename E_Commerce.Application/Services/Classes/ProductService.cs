@@ -22,9 +22,9 @@ namespace E_Commerce.Application.Services.Classes
             return Result<IReadOnlyList<BrandDto>>.Ok(brandsDtos);
         }
 
-        public async Task<Result<IReadOnlyList<ProductDto>>> GetAllProductsAsync(int? brandId, int? typeId, string? searchValue, CancellationToken ct = default)
+        public async Task<Result<IReadOnlyList<ProductDto>>> GetAllProductsAsync(ProductQueryParams queryParams, CancellationToken ct = default)
         {
-            var specs = new ProductWithBrandAndTypeSpecifications(brandId, typeId, searchValue);
+            var specs = new ProductWithBrandAndTypeSpecifications(queryParams);
 
             var products = await unitOfWork.GetRepository<Product, int>().GetAllAsync(specs, ct);
 

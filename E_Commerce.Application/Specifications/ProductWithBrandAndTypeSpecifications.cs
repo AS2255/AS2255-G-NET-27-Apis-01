@@ -1,4 +1,5 @@
-﻿using E_Commerce.Domain.Entities.Products;
+﻿using E_Commerce.Application.Common;
+using E_Commerce.Domain.Entities.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +10,15 @@ namespace E_Commerce.Application.Specifications
 {
     public class ProductWithBrandAndTypeSpecifications : BasedSpecification<Product, int>
     {
-        public ProductWithBrandAndTypeSpecifications(int? brandId, int? typeId, string? searchValue) : 
+        public ProductWithBrandAndTypeSpecifications(ProductQueryParams queryParams) : 
             base
             (
                 P =>
-                (!brandId.HasValue || P.BrandId == brandId)
+                (!queryParams.BrandId.HasValue || P.BrandId == queryParams.BrandId)
                 &&
-                (!typeId.HasValue || P.TypeId == typeId)
+                (!queryParams.TypeId.HasValue || P.TypeId == queryParams.TypeId)
                 &&
-                (string.IsNullOrWhiteSpace(searchValue) || P.Name.ToLower().Contains(searchValue.ToLower()))
+                (string.IsNullOrWhiteSpace(queryParams.SearchValue) || P.Name.ToLower().Contains(queryParams.SearchValue.ToLower()))
             )
         {
             AddInclude(P => P.Brand);
