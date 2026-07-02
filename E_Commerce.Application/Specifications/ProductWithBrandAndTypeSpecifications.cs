@@ -9,10 +9,16 @@ namespace E_Commerce.Application.Specifications
 {
     public class ProductWithBrandAndTypeSpecifications : BasedSpecification<Product, int>
     {
-        public ProductWithBrandAndTypeSpecifications()
+        public ProductWithBrandAndTypeSpecifications() : base(null)
         {
-            AddInclude(p => p.Brand);
-            AddInclude(p => p.Type);
+            AddInclude(P => P.Brand);
+            AddInclude(P => P.Type);
+        }
+
+        public ProductWithBrandAndTypeSpecifications(int id) : base(P => P.Id == id)
+        {
+            AddInclude(P => P.Brand);
+            AddInclude(P => P.Type);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace E_Commerce.Domain.Specifications
 {
     public interface ISpecification<IEntity, TKey> where IEntity : BaseEntity<TKey>
     {
-        public ICollection<Expression<Func<IEntity, object>>> IncludeExpression { get; set; }
+         ICollection<Expression<Func<IEntity, object>>> IncludeExpression { get; }
+        Expression<Func<IEntity, bool>> Criteria { get; }
     }
 }
