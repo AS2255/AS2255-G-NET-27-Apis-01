@@ -1,4 +1,5 @@
 ﻿using E_Commerce.Domain.Common;
+using E_Commerce.Domain.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace E_Commerce.Domain.Contracts.Repositories
         void Delete(TEntity entity);
         Task<TEntity?> GetByIdAsync(TKey id, CancellationToken ct = default);
         Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken ct = default);
+        Task<IReadOnlyList<TEntity>> GetAllAsync(ISpecification<TEntity, TKey> specs, CancellationToken ct = default);
     }
 }

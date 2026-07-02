@@ -1,0 +1,15 @@
+﻿using E_Commerce.Domain.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace E_Commerce.Domain.Specifications
+{
+    public interface ISpecification<IEntity, TKey> where IEntity : BaseEntity<TKey>
+    {
+        public ICollection<Expression<Func<IEntity, object>>> IncludeExpression { get; set; }
+    }
+}
