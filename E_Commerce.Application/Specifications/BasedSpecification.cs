@@ -20,9 +20,22 @@ namespace E_Commerce.Application.Specifications
 
         public Expression<Func<TEntity, object>>? OrderByDescending { get; private set; }
 
+        public int Take { get; private set; }
+
+        public int Skip { get; private set; }
+
+        public bool IsPaginated { get; private set; }
+
         public BasedSpecification(Expression<Func<TEntity, bool>> expression)
         {
             Criteria = expression;
+        }
+
+        protected void ApplyPagination(int pageIndex, int pageSize)
+        {
+            Take = pageSize;
+            Skip = (pageIndex - 1) * pageSize;
+            IsPaginated = true; 
         }
 
         protected void AddOrderBy(Expression<Func<TEntity, object>> expression)

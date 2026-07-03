@@ -13,6 +13,9 @@ namespace E_Commerce.Application.Common
         public string? SearchValue { get; set; }
         public ProductSortOption? Sort { get; set; }
 
+        public int PageIndex { get; set; } = 1;
+        public int PageSize { get; set; } = 5;
+
     }
     
     public enum ProductSortOption

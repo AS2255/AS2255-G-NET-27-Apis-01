@@ -34,6 +34,11 @@ namespace E_Commerce.Infrastructure.Specifications
                 query = query.OrderByDescending(specs.OrderByDescending);
             }
 
+            if (specs.IsPaginated)
+            {
+                query = query.Skip(specs.Skip).Take(specs.Take);
+            }
+
 
             return query;
 
