@@ -12,5 +12,8 @@ namespace E_Commerce.Domain.Specifications
     {
          ICollection<Expression<Func<IEntity, object>>> IncludeExpression { get; }
         Expression<Func<IEntity, bool>> Criteria { get; }
+        Expression<Func<IEntity, object>>? OrderBy { get; }
+        Expression<Func<IEntity, object>>? OrderByDescending { get; }
+
     }
 }
