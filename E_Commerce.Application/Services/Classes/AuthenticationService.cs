@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace E_Commerce.Application.Services.Classes
 {
-    public class AuthenticationService(IIdentityService identityService) : IAuthenticationService
+    public class AuthenticationService(IIdentityService identityService, ITokenService tokenService) : IAuthenticationService
     {
         public async Task<Result<UserDto>> LoginAsync(LoginDto loginDto, CancellationToken ct = default)
         {
@@ -29,11 +29,36 @@ namespace E_Commerce.Application.Services.Classes
 
             var user = userResult.Data;
 
+            var rolesResult = await identityService.GetUserRoleAsync(user.Email, ct);
+
+            var token = await tokenService.CreateTokenAsync(user.Id, user.Email, user.UserName, rolesResult.Data);
+
+            return Result<UserDto>.Ok(new UserDto()
+            {
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                Token = token
+            });
+        }
+
+        public async Task<Result<UserDto>> RegisterAsync(RegisterDto registerDto, CancellationToken ct = default)
+        {
+            // Create User
+            var createUserResult = await identityService.CreateUserAsync(registerDto, ct);
+            if (!createUserResult.IsSuccess)
+                return Result<UserDto>.Fail(createUserResult.Errors);
+
+            var user = createUserResult.Data;
+
+            var rolesResult = await identityService.GetUserRoleAsync(user.Email, ct);
+
+            var token = await tokenService.CreateTokenAsync(user.Id, user.Email, user.UserName, rolesResult.Data);
+
             return Result<UserDto>.Ok(new UserDto()
             {
                 Email = user.Email,
-                Token = "TODO",
-                DisplayName = user.DisplayName
+                DisplayName = user.DisplayName,
+                Token = token
             });
         }
     }

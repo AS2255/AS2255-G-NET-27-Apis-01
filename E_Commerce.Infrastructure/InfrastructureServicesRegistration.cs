@@ -55,6 +55,8 @@ namespace E_Commerce.Infrastructure
                             .AddEntityFrameworkStores<StoreIdentityDbContext>();
 
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<ITokenService, TokenServices>();
+
 
             return services;
         }
