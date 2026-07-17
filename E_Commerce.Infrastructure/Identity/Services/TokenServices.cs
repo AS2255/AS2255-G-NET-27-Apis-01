@@ -31,9 +31,9 @@ namespace E_Commerce.Infrastructure.Identity.Services
             }
 
 
-            var secretKey = "MySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtion";
+            //var secretKey = "MySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtion";
             
-            var SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtionMySeCretKeyFOrMyAppliCtion"));
 
 
             var jwtToken = new JwtSecurityToken(

@@ -3,6 +3,7 @@ using E_Commerce.Application.DTOs.Identity;
 using E_Commerce.Application.Services.Contracts;
 using E_Commerce.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +64,61 @@ namespace E_Commerce.Infrastructure.Identity.Services
 
             var roles = await userManager.GetRolesAsync(user);
             return Result<IReadOnlyList<string>>.Ok(roles.ToList());
+        }
+
+        public async Task<Result<AddressDto>> GetCurrentUserAddressAsync(string email, CancellationToken ct = default)
+        {
+            var user = await userManager.Users.Include(U => U.Address).Where(U => U.Email == email).FirstOrDefaultAsync(ct);
+            if (user is null)
+                return Result<AddressDto>.Fail(Error.NotFound("User.NotFound", $"User With Email {email} Not Found"));
+            if (user.Address is null)
+                return Result<AddressDto>.Fail(Error.NotFound("Address.NotFound", $"Address For User With Email {email} Not Found"));
+            var addressDto = new AddressDto
+            {
+                Street = user.Address.Street,
+                City = user.Address.City,
+                Country = user.Address.Country,
+                FirstName = user.Address.FirstName,
+                LastName = user.Address.LastName
+            };
+            return Result<AddressDto>.Ok(addressDto);
+
+        }
+
+        public async Task<Result<AddressDto>> UpdateCurrentUserAddressAsync(string email, AddressDto addressDto, CancellationToken ct = default)
+        {
+            var user = await userManager.Users.Include(U => U.Address).Where(U => U.Email == email).FirstOrDefaultAsync(ct);
+            if (user is null)
+                return Result<AddressDto>.Fail(Error.NotFound("User.NotFound", $"User With Email {email} Not Found"));
+            if (user.Address is null)
+            {
+                // Create new address
+                user.Address = new Address()
+                {
+                    Street = addressDto.Street,
+                    City = addressDto.City,
+                    Country = addressDto.Country,
+                    FirstName = addressDto.FirstName,
+                    LastName = addressDto.LastName
+                };
+            }
+            else 
+            {
+                // Update existing address
+                user.Address.Street = addressDto.Street;
+                user.Address.City = addressDto.City;
+                user.Address.Country = addressDto.Country;
+                user.Address.FirstName = addressDto.FirstName;
+                user.Address.LastName = addressDto.LastName;
+            }
+            var updateResult = await userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return Result<AddressDto>.Fail(Error.Failure("Failure", "Failed To Update Or Create User Address"));
+            }
+
+            return Result<AddressDto>.Ok(addressDto);
+
         }
     }
 }

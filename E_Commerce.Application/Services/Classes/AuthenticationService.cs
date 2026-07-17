@@ -11,6 +11,41 @@ namespace E_Commerce.Application.Services.Classes
 {
     public class AuthenticationService(IIdentityService identityService, ITokenService tokenService) : IAuthenticationService
     {
+        public async Task<Result<bool>> CheckEmailExistsAsync(string email, CancellationToken ct = default)
+        {
+            var result = await identityService.FindUserByEmailAsync(email, ct);
+            if (result.IsSuccess)
+                return Result<bool>.Ok(true);
+
+            return Result<bool>.Fail(result.Errors);
+        }
+
+        public async Task<Result<AddressDto>> GetCurrentUserAddressAsync(string email, CancellationToken ct = default)
+        {
+            return await identityService.GetCurrentUserAddressAsync(email, ct);
+        }
+
+        public async Task<Result<UserDto>> GetCurrentUserAsync(string email, CancellationToken ct = default)
+        {
+            var userResult = await identityService.FindUserByEmailAsync(email, ct);
+            if (userResult.IsSuccess)
+            {
+                var user = userResult.Data;
+                var rolesResult = await identityService.GetUserRoleAsync(user.Email, ct);
+                var token = await tokenService.CreateTokenAsync(user.Id, user.Email, user.UserName, rolesResult.Data);
+                return Result<UserDto>.Ok(new UserDto()
+                {
+                    DisplayName = user.DisplayName,
+                    Email = user.Email,
+                    Token = token
+                });
+            }
+            else
+            {
+                return Result<UserDto>.Fail(userResult.Errors);
+            }
+        }
+
         public async Task<Result<UserDto>> LoginAsync(LoginDto loginDto, CancellationToken ct = default)
         {
             // Check Email
@@ -60,6 +95,11 @@ namespace E_Commerce.Application.Services.Classes
                 DisplayName = user.DisplayName,
                 Token = token
             });
+        }
+
+        public async Task<Result<AddressDto>> UpdateCurrentUserAddressAsync(string email, AddressDto addressDto, CancellationToken ct = default)
+        {
+            return await identityService.UpdateCurrentUserAddressAsync(email, addressDto, ct);
         }
     }
 }
